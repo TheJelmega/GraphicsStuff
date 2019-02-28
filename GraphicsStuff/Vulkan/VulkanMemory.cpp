@@ -94,6 +94,26 @@ namespace Vulkan {
 			range.memory = m_Memory;
 			range.offset = m_Offset + m_MapOffset;
 			range.size = m_MapSize;
+
+			VkDeviceSize atomSize = m_pContext->GetSelectedPhysicalDevice()->GetLimits().nonCoherentAtomSize;
+			VkDeviceSize atomMask = atomSize - 1;
+
+			VkDeviceSize frontPad = range.offset & atomMask;
+			if (frontPad > 0)
+			{
+				range.offset -= frontPad;
+				range.size += frontPad;
+			}
+			VkDeviceSize backPad = (range.offset + range.size) & atomMask;
+			if (backPad > 0)
+			{
+				VkDeviceSize pad = atomSize - backPad;
+				range.size += pad;
+			}
+
+			if (range.offset + range.size >= m_MapSize)
+				range.size = VK_WHOLE_SIZE;
+
 			vkres = pDevice->vkFlushMappedMemoryRanges(range);
 			if (vkres != VK_SUCCESS)
 			{

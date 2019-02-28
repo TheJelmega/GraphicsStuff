@@ -435,10 +435,22 @@ namespace Vulkan { namespace Helpers {
 		}
 	}
 
-	VkAccessFlags GetImageTransitionAccessMode(RHI::TextureLayout layout)
+	VkAccessFlags GetImageTransitionAccessMode(RHI::PipelineStage stage, RHI::TextureLayout layout, bool src)
 	{
-		assert(u8(layout) < u8(RHI::TextureLayout::Count));
-		return Tables::g_ImageTransitionAccessFlags[u8(layout)];
+		switch (stage) 
+		{
+			case RHI::PipelineStage::FragmentShader:
+				return src ? VK_ACCESS_INPUT_ATTACHMENT_READ_BIT : 0;
+			case RHI::PipelineStage::EarlyFragmentTest:
+			case RHI::PipelineStage::LastFragmentTest:
+				return src ? VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT : VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			case RHI::PipelineStage::ColorAttachmentOutput:
+				return src ? VK_ACCESS_COLOR_ATTACHMENT_READ_BIT : VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			case RHI::PipelineStage::Transfer:
+				return src ? VK_ACCESS_TRANSFER_READ_BIT : VK_ACCESS_TRANSFER_WRITE_BIT;
+			default:
+				return 0;
+		}
 	}
 
 	VkFilter GetFilter(RHI::FilterMode filter)

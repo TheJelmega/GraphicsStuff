@@ -74,7 +74,7 @@ namespace Vulkan {
 		}
 
 		VkApplicationInfo applicationInfo = {};
-		applicationInfo.apiVersion = VK_API_VERSION_1_0;// m_VulkanApiVersion;
+		applicationInfo.apiVersion = m_VulkanApiVersion;
 		// TODO: Add app info ???
 
 		VkInstanceCreateInfo createInfo = {};

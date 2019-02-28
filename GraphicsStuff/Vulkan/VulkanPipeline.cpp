@@ -160,6 +160,7 @@ namespace Vulkan {
 
 		// Depth stencic state
 		VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
+		depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		depthStencilState.depthTestEnable = desc.depthStencil.enableDepthTest;
 		depthStencilState.depthWriteEnable = desc.depthStencil.enableDepthWrite;
 		depthStencilState.depthBoundsTestEnable = desc.depthStencil.enableDepthBoundTest;

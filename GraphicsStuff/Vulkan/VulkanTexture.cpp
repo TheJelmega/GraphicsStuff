@@ -366,6 +366,11 @@ namespace Vulkan {
 			if ((m_Desc.flags & RHI::TextureFlags::InputAttachment) != RHI::TextureFlags::None)
 				imageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
 
+			if ((m_Desc.flags & RHI::TextureFlags::Color) != RHI::TextureFlags::None)
+				imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+			if ((m_Desc.flags & RHI::TextureFlags::DepthStencil) != RHI::TextureFlags::None)
+				imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+
 			// flags
 			// Always mutable?
 			imageInfo.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;

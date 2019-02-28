@@ -90,7 +90,9 @@ namespace RHI {
 		Storage = 0x08,		/**< Image can be used as a storage image (Compute) */
 		InputAttachment = 0x10,		/**< Image can be used as a input attachment (Compute) */
 
-		RenderTargetable = 0x80,	/**< [INTERNAL] If the texture can be used as a the underlying texture for a rendertarget */
+		RenderTargetable = 0x20,	/**< [INTERNAL] If the texture can be used as a the underlying texture for a rendertarget */
+		Color = 0x40,				/**< [INTERNAL] If the texture can be used as a the underlying texture for a color attachment */
+		DepthStencil = 0x80,		/**< [INTERNAL] If the texture can be used as a the underlying texture for a depth stencil attachment */
 	};
 	ENABLE_ENUM_FLAG_OPERATORS(TextureFlags);
 

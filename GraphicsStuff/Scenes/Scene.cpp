@@ -1,7 +1,7 @@
 #include "Scene.h"
 #include "../RHI/IDynamicRHI.h"
 #include "../RHI/SwapChain.h"
-#include <SFML/Window/Window.hpp>
+#include <GLFW/glfw3.h>
 
 Scene::Scene()
 	: m_pRhi(nullptr)
@@ -43,7 +43,7 @@ void Scene::OnWindowResize()
 {
 }
 
-void Scene::SetGeneral(RHI::IDynamicRHI* pRhi, sf::Window* pWindow)
+void Scene::SetGeneral(RHI::IDynamicRHI* pRhi, GLFWwindow* pWindow)
 {
 	m_pRhi = pRhi;
 	m_pWindow = pWindow;
@@ -53,5 +53,5 @@ void Scene::Present()
 {
 	if (m_pSwapChain)
 		m_pSwapChain->Present();
-	m_pWindow->display();
+	glfwSwapBuffers(m_pWindow);
 }

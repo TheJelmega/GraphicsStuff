@@ -21,7 +21,7 @@ namespace Vulkan {
 		 * Initialize the dynamic RHI
 		 * @return	True if the dynamic RHI was initialized successfully, false otherwise
 		 */
-		b8 Init(const RHI::RHIDesc& desc, sf::Window* pMainWindow) override final;
+		b8 Init(const RHI::RHIDesc& desc, GLFWwindow* pMainWindow) override final;
 		/**
 		 * Shutdown the dynamic RHI
 		 * @return	True if the dynamic RHI was shut down successfully, false otherwise
@@ -37,7 +37,7 @@ namespace Vulkan {
 		 * @param[in] vsync		V-sync mode
 		 * @return				Pointer to the renderview, nullptr if the creation failed
 		 */
-		RHI::SwapChain* CreateSwapChain(sf::Window* pWindow, RHI::VSyncMode vsync) override final;
+		RHI::SwapChain* CreateSwapChain(GLFWwindow* pWindow, RHI::VSyncMode vsync) override final;
 		/**
 		 * Destroy a renderview
 		 * @param[in] pRenderView	Renderview to destroy

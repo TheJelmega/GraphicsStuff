@@ -15,7 +15,7 @@ namespace RHI {
 	class Shader;
 }
 
-class TestScene : public Scene
+class BasicScene : public Scene
 {
 private:
 	struct UBO
@@ -34,8 +34,8 @@ private:
 	};
 
 public:
-	TestScene();
-	~TestScene();
+	BasicScene();
+	~BasicScene();
 
 
 	b8 Init() override;

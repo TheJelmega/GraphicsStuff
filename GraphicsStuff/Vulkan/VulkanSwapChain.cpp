@@ -1,5 +1,7 @@
 
-#include <SFML/Window/Window.hpp>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include "VulkanSwapChain.h"
@@ -11,6 +13,10 @@
 #include "VulkanRenderTarget.h"
 #include "VulkanSemaphore.h"
 #include "VulkanQueue.h"
+
+#undef min
+#undef max
+#include <algorithm>
 
 namespace Vulkan {
 	
@@ -25,7 +31,7 @@ namespace Vulkan {
 	{
 	}
 
-	b8 VulkanSwapChain::Init(RHI::RHIContext* pContext, sf::Window* pWindow, RHI::VSyncMode vsync, RHI::Queue* pQueue)
+	b8 VulkanSwapChain::Init(RHI::RHIContext* pContext, GLFWwindow* pWindow, RHI::VSyncMode vsync, RHI::Queue* pQueue)
 	{
 		VulkanInstance* pInstance = ((VulkanContext*)pContext)->GetInstance();
 		VulkanDevice* pDevice = ((VulkanContext*)pContext)->GetDevice();
@@ -44,9 +50,9 @@ namespace Vulkan {
 
 			VkWin32SurfaceCreateInfoKHR createInfo = {};
 			createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-			sf::WindowHandle handle = m_pWindow->getSystemHandle();
-			createInfo.hwnd = (HWND)handle;
-			createInfo.hinstance = (HINSTANCE)GetWindowLongPtr((HWND)handle, GWLP_HINSTANCE);
+			HWND handle = glfwGetWin32Window(pWindow);
+			createInfo.hwnd = handle;
+			createInfo.hinstance = (HINSTANCE)GetWindowLongPtr(handle, GWLP_HINSTANCE);
 #else
 #endif
 			vkres = pInstance->vkCreateSurface(createInfo, m_Surface);
@@ -91,8 +97,10 @@ namespace Vulkan {
 
 			VkSurfaceCapabilitiesKHR capabilities;
 			pPhysicalDevice->QuerySurfaceCapabilities(m_Surface, capabilities);
-			sf::Vector2u windowSize = m_pWindow->getSize();
-			VkExtent2D extent = Helpers::GetSwapExtent(glm::uvec2(windowSize.x, windowSize.y), capabilities);
+			int width;
+			int height;
+			glfwGetWindowSize(pWindow, &width, &height);
+			VkExtent2D extent = Helpers::GetSwapExtent(glm::uvec2(width, height), capabilities);
 
 			u32 minImages = vsync == RHI::VSyncMode::Tripple ? 3 : 2;
 			minImages = std::min(std::max(minImages, capabilities.minImageCount), capabilities.maxImageCount);

@@ -1,12 +1,12 @@
 #define GLM_DEPTH_ZERO_TO_ONE
-#include "TestScene.h"
+#define GLM_FORCE_LEFT_HANDED
+#include "BasicScene.h"
 #include "../RHI/IDynamicRHI.h"
 #include "../RHI/Shader.h"
 #include "../RHI/Sampler.h"
 
-
+#include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <SFML/Window/Window.hpp>
 #include "../RHI/CommandListManager.h"
 #include "../RHI/Queue.h"
 #include "../RHI/SwapChain.h"
@@ -14,7 +14,7 @@
 #include "../RHI/DescriptorSetManager.h"
 
 
-TestScene::TestScene()
+BasicScene::BasicScene()
 	: m_pVertShader(nullptr)
 	, m_pFragShader(nullptr)
 	, m_pSampler(nullptr)
@@ -22,16 +22,16 @@ TestScene::TestScene()
 {
 }
 
-TestScene::~TestScene()
+BasicScene::~BasicScene()
 {
 }
 
-b8 TestScene::Init()
+b8 BasicScene::Init()
 {
 	Scene::Init();
 
-	RHI::ShaderDesc vertexShader = { RHI::ShaderType::Vertex, "Shaders/Shader_vert.spv", "main", RHI::ShaderLanguage::GLSL };
-	RHI::ShaderDesc fragmentShader = { RHI::ShaderType::Fragment, "Shaders/Shader_frag.spv", "main", RHI::ShaderLanguage::GLSL };
+	RHI::ShaderDesc vertexShader = { RHI::ShaderType::Vertex, "Shaders/Shader_vert.spv", "main", RHI::ShaderLanguage::Spirv };
+	RHI::ShaderDesc fragmentShader = { RHI::ShaderType::Fragment, "Shaders/Shader_frag.spv", "main", RHI::ShaderLanguage::Spirv };
 
 	m_pVertShader = m_pRhi->CreateShader(vertexShader);
 	m_pFragShader = m_pRhi->CreateShader(fragmentShader);
@@ -48,31 +48,33 @@ b8 TestScene::Init()
 
 	std::vector<Vertex> vertices = {
 		//   position       normal        color        uv
-		{ {-.5,  .5, 0} , {0, 0, 1} , {1, 0, 0, 1} , {0, 0} },
-		{ {-.5, -.5, 0} , {0, 0, 1} , {0, 1, 0, 1} , {0, 0} },
-		{ { .5,  .5, 0} , {0, 0, 1} , {0, 0, 1, 1} , {0, 0} },
-		{ { .5, -.5, 0} , {0, 0, 1} , {1, 1, 1, 1} , {0, 0} },
+		{ {-64,  64, 0} , {0, 0, 1} , {1, 0, 0, 1} , {0, 0} },
+		{ {-64, -64, 0} , {0, 0, 1} , {0, 1, 0, 1} , {0, 0} },
+		{ { 64,  64, 0} , {0, 0, 1} , {0, 0, 1, 1} , {0, 0} },
+		{ { 64, -64, 0} , {0, 0, 1} , {1, 1, 1, 1} , {0, 0} },
 	};
 
-	m_pVertexBuffer = m_pRhi->CreateVertexBuffer(vertices.size(), sizeof(Vertex), RHI::BufferFlags::Static);
+	m_pVertexBuffer = m_pRhi->CreateVertexBuffer(u32(vertices.size()), sizeof(Vertex), RHI::BufferFlags::Static);
 	m_pVertexBuffer->Write(0, vertices.size() * sizeof(Vertex), vertices.data());
 
 
 	std::vector<i16> indices = {
 		0, 1, 2,
-		2, 1, 3
+		2, 3, 1
 	};
 
-	m_pIndexBuffer = m_pRhi->CreateIndexBuffer(indices.size(), RHI::IndexType::UShort, RHI::BufferFlags::Static);
+	m_pIndexBuffer = m_pRhi->CreateIndexBuffer(u32(indices.size()), RHI::IndexType::UShort, RHI::BufferFlags::Static);
 	m_pIndexBuffer->Write(0, indices.size() * sizeof(i16), indices.data());
 
 
 	m_pUniformBuffer = m_pRhi->CreateBuffer(RHI::BufferType::Uniform, sizeof(glm::mat4) * 3, RHI::BufferFlags::Dynamic);
 
-	sf::Vector2u windowSize = m_pWindow->getSize();
-	f32 aspect = f32(windowSize.x) / f32(windowSize.y);
-	m_Ubo.projMatrix = glm::perspective(60.f, aspect, 0.01f, 1000.f);
-	m_Ubo.viewMatrix = glm::lookAt(glm::vec3(0, 0, 2), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	int windowWidth;
+	int windowHeight;
+	glfwGetWindowSize(m_pWindow, &windowWidth, &windowHeight);
+	f32 aspect = f32(windowWidth) / f32(windowHeight);
+	m_Ubo.projMatrix = glm::ortho(-windowWidth / 2.f, windowWidth / 2.f, -windowHeight / 2.f, windowHeight / 2.f, 0.01f, 1000.f); //glm::perspective(60.f, aspect, 0.01f, 1000.f);
+	m_Ubo.viewMatrix = glm::lookAtLH(glm::vec3(0, 0, -2), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	m_Ubo.modelMatrix = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
 	m_pUniformBuffer->Write(0, sizeof(UBO), &m_Ubo);
@@ -102,9 +104,14 @@ b8 TestScene::Init()
 	return true;
 }
 
-void TestScene::Update(f32 dt)
+void BasicScene::Update(f32 dt)
 {
 	Scene::Update(dt);
+}
+
+void BasicScene::Render(f32 dt)
+{
+	Scene::Render(dt);
 
 	i32 index = m_pSwapChain->GetCurrentIndex();
 
@@ -122,28 +129,25 @@ void TestScene::Update(f32 dt)
 	pCommandList->BindIndexBuffer(m_pIndexBuffer, 0, RHI::IndexType::UShort);
 	pCommandList->BindDescriptorSets(0, m_pDescriptorSet);
 
+	pCommandList->DrawIndexed(6);
 	pCommandList->EndRenderPass();
 
-	pCommandList->DrawIndexed(6);
-
 	pCommandList->End();
-	std::vector<RHI::Semaphore*> waitSemaphores;
-	std::vector<RHI::PipelineStage> waitStages;
-	std::vector<RHI::Semaphore*> signalSemaphores;
+
+	
+
+	std::vector<RHI::Semaphore*> waitSemaphores = { m_pSwapChain->GetSignalSemaphore() };
+	std::vector<RHI::PipelineStage> waitStages = { RHI::PipelineStage::TopOfPipe };
+	std::vector<RHI::Semaphore*> signalSemaphores = { m_pSwapChain->GetWaitSemaphore() };
 	pCommandList->Submit(waitSemaphores, waitStages, signalSemaphores);
 }
 
-void TestScene::Render(f32 dt)
-{
-	Scene::Render(dt);
-}
-
-void TestScene::RenderGUI(f32 dt)
+void BasicScene::RenderGUI(f32 dt)
 {
 	Scene::RenderGUI(dt);
 }
 
-b8 TestScene::Shutdown()
+b8 BasicScene::Shutdown()
 {
 	RHI::CommandListManager* pCommandListManager = m_pRhi->GetCommandListManager();
 	for (i32 i = 0; i < 3; ++i)
@@ -164,16 +168,20 @@ b8 TestScene::Shutdown()
 	m_pRhi->DestroyBuffer(m_pIndexBuffer);
 	m_pRhi->DestroyBuffer(m_pUniformBuffer);
 
+	m_pRhi->DestroySampler(m_pSampler);
+	m_pRhi->DestroyShader(m_pVertShader);
+	m_pRhi->DestroyShader(m_pFragShader);
+
 	return Scene::Shutdown();
 }
 
-void TestScene::OnWindowResize()
+void BasicScene::OnWindowResize()
 {
 	SizeDependDestroy(true);
 	SizeDependCreate();
 }
 
-void TestScene::SizeDependCreate()
+void BasicScene::SizeDependCreate()
 {
 	if (!m_pSwapChain)
 	{
@@ -215,18 +223,20 @@ void TestScene::SizeDependCreate()
 	m_pRenderPass = m_pRhi->CreateRenderPass(attachments, subpasses);
 
 	// Pipeline
-	sf::Vector2u windowSize = m_pWindow->getSize();
+	int windowWidth;
+	int windowHeight;
+	glfwGetWindowSize(m_pWindow, &windowWidth, &windowHeight);
 	RHI::GraphicsPipelineDesc pipelineDesc = {};
 	pipelineDesc.viewport.x = 0.f;
 	pipelineDesc.viewport.y = 0.f;
-	pipelineDesc.viewport.width = f32(windowSize.x);
-	pipelineDesc.viewport.height = f32(windowSize.y);
+	pipelineDesc.viewport.width = f32(windowWidth);
+	pipelineDesc.viewport.height = f32(windowHeight);
 	pipelineDesc.viewport.minDepth = 0.f;
 	pipelineDesc.viewport.maxDepth = 1.f;
 	pipelineDesc.scissor.x = 0;
 	pipelineDesc.scissor.y = 0;
-	pipelineDesc.scissor.width = windowSize.x;
-	pipelineDesc.scissor.height = windowSize.y;
+	pipelineDesc.scissor.width = windowWidth;
+	pipelineDesc.scissor.height = windowHeight;
 
 	pipelineDesc.pVertexShader = m_pVertShader;
 	pipelineDesc.pFragmentShader = m_pFragShader;
@@ -256,15 +266,15 @@ void TestScene::SizeDependCreate()
 	RHI::DepthStencilDesc& depthStencil = pipelineDesc.depthStencil;
 	depthStencil.enableDepthWrite = true;
 	depthStencil.enableDepthTest = true;
-	depthStencil.depthCompareOp = RHI::CompareOp::Less;
+	depthStencil.depthCompareOp = RHI::CompareOp::Greater;
 
 	m_pPipeline = m_pRhi->CreatePipeline(pipelineDesc);
 
 	// Framebuffers and depth stencils
 	RHI::RenderTargetDesc depthDesc = {};
 	depthDesc.type = RHI::RenderTargetType::DepthStencil;
-	depthDesc.width = windowSize.x;
-	depthDesc.height = windowSize.y;
+	depthDesc.width = windowWidth;
+	depthDesc.height = windowHeight;
 	depthDesc.samples = RHI::SampleCount::Sample1;
 	depthDesc.format = PixelFormat(PixelFormatComponents::D32, PixelFormatTransform::SFLOAT);
 
@@ -281,7 +291,7 @@ void TestScene::SizeDependCreate()
 
 }
 
-void TestScene::SizeDependDestroy(b8 destroySwapChain)
+void BasicScene::SizeDependDestroy(b8 destroySwapChain)
 {
 
 	for (i32 i = 0; i < 3; ++i)

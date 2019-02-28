@@ -24,12 +24,12 @@ namespace RHI {
 			{
 				if ((queueType & type) != QueueType::Unknown)
 					pOutQueue = pQueue;
-				if ((queueType & ~type) == RHI::QueueType::Unknown)
+				if ((queueType & type) == type)
 					return pOutQueue;
 			}
 			else
 			{
-				if ((queueType & ~type) == RHI::QueueType::Unknown)
+				if ((queueType & type) == type)
 					return pQueue;
 			}
 

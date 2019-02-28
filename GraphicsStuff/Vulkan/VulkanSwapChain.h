@@ -18,7 +18,7 @@ namespace Vulkan {
 		 * @param[in] pQueue	Present queue
 		 * @return				True if the render view was created successfully, false otherwise
 		 */
-		b8 Init(RHI::RHIContext* pContext, sf::Window* pWindow, RHI::VSyncMode vsync, RHI::Queue* pQueue) override final;
+		b8 Init(RHI::RHIContext* pContext, GLFWwindow* pWindow, RHI::VSyncMode vsync, RHI::Queue* pQueue) override final;
 
 		/**
 		* Destroy a render view

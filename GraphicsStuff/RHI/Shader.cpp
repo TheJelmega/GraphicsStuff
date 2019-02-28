@@ -18,7 +18,7 @@ namespace RHI {
 
 	b8 Shader::LoadShaderSource()
 	{
-		std::ifstream stream(m_FilePath.c_str());
+		std::ifstream stream(m_FilePath.c_str(), std::ios::binary);
 		if (!stream.is_open())
 		{
 			//g_Logger.LogFormat(LogRenderCore(), LogLevel::Error, "Failed to open shader file: %s!", m_FilePath);

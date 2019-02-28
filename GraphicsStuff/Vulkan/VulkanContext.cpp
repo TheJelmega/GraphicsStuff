@@ -66,6 +66,7 @@ namespace Vulkan {
 		, m_pInstance(nullptr)
 		, m_pDevice(nullptr)
 		, m_pAllocator(nullptr)
+		, m_pSelectedPhysicalDevice(nullptr)
 	{
 		m_AllocationCallbacks.pUserData = nullptr;
 		m_AllocationCallbacks.pfnAllocation = &VulkanAlloc;
@@ -79,7 +80,7 @@ namespace Vulkan {
 	{
 	}
 
-	b8 VulkanContext::Init(const RHI::RHIDesc& desc, sf::Window* pMainWindow)
+	b8 VulkanContext::Init(const RHI::RHIDesc& desc, GLFWwindow* pMainWindow)
 	{
 		// Create Instance
 		m_pInstance = new VulkanInstance();
@@ -363,6 +364,7 @@ namespace Vulkan {
 		if (deviceIndex == u32(-1))
 			return nullptr;
 
-		return m_PhysicalDevices[deviceIndex];
+		m_pSelectedPhysicalDevice = m_PhysicalDevices[deviceIndex];
+		return m_pSelectedPhysicalDevice;
 	}
 }

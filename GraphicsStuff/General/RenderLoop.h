@@ -1,6 +1,5 @@
 #pragma once
 #include "TypesAndMacros.h"
-#include <SFML/Window/Window.hpp>
 
 namespace RHI
 {
@@ -8,6 +7,7 @@ namespace RHI
 }
 
 class Scene;
+struct GLFWwindow;
 
 class RenderLoop
 {
@@ -25,7 +25,7 @@ private:
 	i32 m_Width = 1280;
 	i32 m_Height = 720;
 
-	sf::Window* m_pWindow;
+	GLFWwindow* m_pWindow;
 
 	RHI::IDynamicRHI* m_pRHI;
 

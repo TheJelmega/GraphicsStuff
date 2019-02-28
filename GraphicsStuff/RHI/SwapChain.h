@@ -6,9 +6,7 @@
 #include "../General/TypesAndMacros.h"
 #include "RHICommon.h"
 
-namespace sf {
-	class Window;
-}
+struct GLFWwindow;
 
 namespace RHI {
 	class RHIContext;
@@ -31,7 +29,7 @@ namespace RHI {
 		 * @param[in] pQueue	Present queue
 		 * @return				True if the render view was created successfully, false otherwise
 		 */
-		virtual b8 Init(RHI::RHIContext* pContext, sf::Window* pWindow, VSyncMode vsync, Queue* pQueue) = 0;
+		virtual b8 Init(RHI::RHIContext* pContext, GLFWwindow* pWindow, VSyncMode vsync, Queue* pQueue) = 0;
 
 		/**
 		* Destroy a render view
@@ -85,12 +83,12 @@ namespace RHI {
 
 
 	protected:
-		RHIContext* m_pContext;				/**< RHI context */
-		sf::Window* m_pWindow;							/**< Associated window */
+		RHIContext* m_pContext;						/**< RHI context */
+		GLFWwindow* m_pWindow;						/**< Associated window */
 		VSyncMode m_VSync;							/**< VSync mode */
 		Queue* m_pPresentQueue;						/**< Present queue */
 		std::vector<RenderTarget*> m_RenderTargets;	/**< Render targets */
-		std::vector<Semaphore*> m_WaitSemaphores;		/**< Wait semaphores (can present to screen) */
+		std::vector<Semaphore*> m_WaitSemaphores;	/**< Wait semaphores (can present to screen) */
 		std::vector<Semaphore*> m_SignalSemaphores;	/**< Signal semaphores (can use backbuffer) */
 		u32 m_RenderTargetIndex;					/**< Render target index */
 		u32 m_SemaphoreIndex;						/**< Render target index */

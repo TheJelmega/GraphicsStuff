@@ -6,9 +6,7 @@
 #include "../General/TypesAndMacros.h"
 #include "RHICommon.h"
 
-namespace sf {
-	class Window;
-}
+struct GLFWwindow;
 
 namespace RHI {
 	struct RHIDesc;
@@ -29,7 +27,7 @@ namespace RHI {
 		 * Initialize the RHI context
 		 * @return	True if the context was initialized successfully initialized, false otherwise
 		 */
-		virtual b8 Init(const RHIDesc& desc, sf::Window* pMainWindow) = 0;
+		virtual b8 Init(const RHIDesc& desc, GLFWwindow* pMainWindow) = 0;
 		/**
 		 * Destroy the RHI context
 		 * @return	True if the context was destroyed successfully initialized, false otherwise

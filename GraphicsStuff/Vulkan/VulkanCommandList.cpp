@@ -624,8 +624,8 @@ namespace Vulkan {
 
 		VkImageMemoryBarrier imageBarrier = {};
 		imageBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imageBarrier.srcAccessMask = Helpers::GetImageTransitionAccessMode(pTexture->GetLayout());
-		imageBarrier.dstAccessMask = Helpers::GetImageTransitionAccessMode(transition.layout);
+		imageBarrier.srcAccessMask = Helpers::GetImageTransitionAccessMode(srcStage, pTexture->GetLayout(), true);
+		imageBarrier.dstAccessMask = Helpers::GetImageTransitionAccessMode(dstStage, transition.layout, false);
 		imageBarrier.oldLayout = Helpers::GetImageLayout(pTexture->GetLayout());
 		imageBarrier.newLayout = Helpers::GetImageLayout(transition.layout);
 		imageBarrier.image = ((VulkanTexture*)pTexture)->GetImage();

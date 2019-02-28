@@ -20,7 +20,7 @@ namespace Vulkan {
 	{
 	}
 
-	b8 VulkanDynamicRHI::Init(const RHI::RHIDesc& desc, sf::Window* pMainWindow)
+	b8 VulkanDynamicRHI::Init(const RHI::RHIDesc& desc, GLFWwindow* pMainWindow)
 	{
 		m_Desc = desc;
 
@@ -54,7 +54,7 @@ namespace Vulkan {
 	////////////////////////////////////////////////////////////////////////////////
 	// Renderview																  //
 	////////////////////////////////////////////////////////////////////////////////
-	RHI::SwapChain* VulkanDynamicRHI::CreateSwapChain(sf::Window* pWindow, RHI::VSyncMode vsync)
+	RHI::SwapChain* VulkanDynamicRHI::CreateSwapChain(GLFWwindow* pWindow, RHI::VSyncMode vsync)
 	{
 		VulkanSwapChain* pView = new VulkanSwapChain();
 

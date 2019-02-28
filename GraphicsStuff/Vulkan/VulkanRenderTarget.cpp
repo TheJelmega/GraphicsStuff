@@ -26,6 +26,10 @@ namespace Vulkan {
 		m_pTexture = new VulkanTexture();
 
 		RHI::TextureFlags textureFlags = RHI::TextureFlags::RenderTargetable;
+		if (desc.type == RHI::RenderTargetType::Color || desc.type == RHI::RenderTargetType::Presentable)
+			textureFlags |= RHI::TextureFlags::Color;
+		if (desc.type == RHI::RenderTargetType::DepthStencil)
+			textureFlags |= RHI::TextureFlags::DepthStencil;
 
 		u32 width = desc.width;
 		u32 height = desc.height;

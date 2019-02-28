@@ -23,7 +23,7 @@ namespace Vulkan {
 		 * Initialize the RHI context
 		 * @return	True if the context was initialized successfully initialized, false otherwise
 		 */
-		b8 Init(const RHI::RHIDesc& desc, sf::Window* pMainWindow) override;
+		b8 Init(const RHI::RHIDesc& desc, GLFWwindow* pMainWindow) override;
 		/**
 		 * Destroy the RHI context
 		 * @return	True if the context was destroyed successfully initialized, false otherwise
@@ -45,6 +45,8 @@ namespace Vulkan {
 		 * @return							Most suitable physical device
 		 */
 		VulkanPhysicalDevice* GetMostSuitablePhysicalDevice(const std::vector<const char*>& requestedExtensions, const std::vector<const char*>& requestedLayers, const VkPhysicalDeviceFeatures& features, b8 needsPresentSupport);
+
+		VulkanPhysicalDevice* GetSelectedPhysicalDevice() { return m_pSelectedPhysicalDevice; }
 
 		/**
 		 * Get the vulkan allocation callbacks
@@ -77,6 +79,7 @@ namespace Vulkan {
 		VkAllocationCallbacks m_AllocationCallbacks;		/**< Vulkan allocation callbacks */
 		VulkanInstance* m_pInstance;						/**< Vulkan instance */
 		std::vector<VulkanPhysicalDevice*> m_PhysicalDevices;	/**< Vulkan physical devices */
+		VulkanPhysicalDevice* m_pSelectedPhysicalDevice;
 		VulkanDevice* m_pDevice;							/**< Vulkan device */
 		VulkanAllocator* m_pAllocator;						/**< Vulkan memory allocator */
 	};

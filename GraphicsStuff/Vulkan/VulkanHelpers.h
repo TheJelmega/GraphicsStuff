@@ -250,7 +250,7 @@ namespace Vulkan { namespace Helpers {
 	 * @param[in] layout	Texture layout
 	 * @return				Corresponding vulkan access mode
 	 */
-	VkAccessFlags GetImageTransitionAccessMode(RHI::TextureLayout layout);
+	VkAccessFlags GetImageTransitionAccessMode(RHI::PipelineStage stage, RHI::TextureLayout layout, bool src);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Sampler																	  //
@@ -646,18 +646,6 @@ namespace Vulkan { namespace Helpers {
 			RHI::TextureLayout::ShaderReadOnly,
 			RHI::TextureLayout::TransferSrc,
 			RHI::TextureLayout::TransferDst,
-		};
-
-		// Not sure if correct
-		static VkAccessFlags g_ImageTransitionAccessFlags[VK_IMAGE_LAYOUT_PREINITIALIZED] = {
-			0,
-			0,
-			VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-			VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
-			VK_ACCESS_SHADER_READ_BIT,
-			VK_ACCESS_TRANSFER_READ_BIT,
-			VK_ACCESS_TRANSFER_WRITE_BIT,
 		};
 
 		static VkFilter g_Filters[u8(RHI::FilterMode::Count)] = {

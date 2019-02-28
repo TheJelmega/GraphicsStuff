@@ -10,9 +10,7 @@
 #include "DescriptorSet.h"
 #include "RHIContext.h"
 
-namespace sf {
-	class Window;
-}
+struct GLFWwindow;
 
 namespace RHI {
 	struct TextureDesc;
@@ -45,7 +43,7 @@ namespace RHI {
 		 * Initialize the dynamic RHI
 		 * @return	True if the dynamic RHI was initialized successfully, false otherwise
 		 */
-		virtual b8 Init(const RHIDesc& desc, sf::Window* pMainWindow) = 0;
+		virtual b8 Init(const RHIDesc& desc, GLFWwindow* pMainWindow) = 0;
 		/**
 		 * Destroy the dynamic RHI
 		 * @return	True if the dynamic RHI was shut down successfully, false otherwise
@@ -61,7 +59,7 @@ namespace RHI {
 		 * @param[in] vsync		V-sync mode
 		 * @return				Pointer to the renderview, nullptr if the creation failed
 		 */
-		virtual SwapChain* CreateSwapChain(sf::Window* pWindow, VSyncMode vsync) = 0;
+		virtual SwapChain* CreateSwapChain(GLFWwindow* pWindow, VSyncMode vsync) = 0;
 		/**
 		 * Destroy a renderview
 		 * @param[in] pRenderView	Renderview to destroy

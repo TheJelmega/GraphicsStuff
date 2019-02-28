@@ -1,9 +1,7 @@
 #pragma once
 #include "../General/TypesAndMacros.h"
 
-namespace sf {
-	class Window;
-}
+struct GLFWwindow;
 
 namespace RHI {
 	class SwapChain;
@@ -26,14 +24,14 @@ public:
 
 	virtual void OnWindowResize();
 
-	void SetGeneral(RHI::IDynamicRHI* pRhi, sf::Window* pWindow);
+	void SetGeneral(RHI::IDynamicRHI* pRhi, GLFWwindow* pWindow);
 
 	void Present();
 
 protected:
 
 	RHI::IDynamicRHI* m_pRhi;
-	sf::Window* m_pWindow;
+	GLFWwindow* m_pWindow;
 
 	RHI::SwapChain* m_pSwapChain;
 };
